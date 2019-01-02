@@ -6,28 +6,41 @@ using UnityEngine;
 public class KnightController : MonoBehaviour
 {
     public GameObject knight;
-    public Sprite attackSprite;
-    public Sprite defendSprite;
-    private bool shield = false;
+    public GameObject knightpivot;
+
+    [HideInInspector]
+    public bool shield = false;
+    [HideInInspector]
+    public bool active = false;
+
     void Update()
     {
-        if (Input.GetButtonDown("Knight"))
+        //Activating the knight
+        if (!active && (Input.GetAxis("Knight") == 1 || Input.GetAxis("Shield") == 1))
         {
             knight.SetActive(true);
+            knight.GetComponent<Animator>().SetBool("shield", shield);
+            active = true;
         }
-        if (Input.GetButtonUp("Knight"))
+        if (active && (Input.GetAxis("Knight") == 0 && Input.GetAxis("Shield") == 0))
         {
             knight.SetActive(false);
+            active = false;
         }
-        if (Input.GetAxis("Shield") == 1 && !shield)
+
+        //Toggle between attack and defense
+        if (!shield && Input.GetAxis("Shield") == 1)
         {
-            knight.GetComponent<SpriteRenderer>().sprite = defendSprite;
+            knight.GetComponent<Animator>().SetBool("shield", true);
             shield = true;
         }
-        if (Input.GetAxis("Shield") == 0 && shield)
+        if (shield && Input.GetAxis("Knight") == 1 && Input.GetAxis("Shield") == 0)
         {
-            knight.GetComponent<SpriteRenderer>().sprite = attackSprite;
+            knight.GetComponent<Animator>().SetBool("shield", false);
             shield = false;
         }
+        //Rotating the knight
+        float rotation = Input.GetAxis("RightVertical");
+        knightpivot.GetComponent<Transform>().rotation = Quaternion.Euler(0f, 0f, rotation * 20f);
     }
 }

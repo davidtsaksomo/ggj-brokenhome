@@ -18,19 +18,21 @@ public class PlayerController : MonoBehaviour
 	private bool grounded = false;			// Whether or not the player is grounded.
     public Transform[] groundChecks;
 
-	private Animator anim;					// Reference to the player's animator component.
-	private float crossHandTimer = 0f;
+	private Animator anim;					
     private Rigidbody2D rb;
+    private KnightController knight;
+
+    private float crossHandTimer = 0f;
     private float defaultGravityScale;
     public float durationRun = 0;
 
     void Awake()
 	{
-		// Setting up references.
 		anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        knight = GetComponent<KnightController>();
+
         defaultGravityScale = rb.gravityScale;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
     void FixedUpdate ()
@@ -40,7 +42,8 @@ public class PlayerController : MonoBehaviour
                     || Physics2D.Linecast(transform.position, groundChecks[1].position, 1 << LayerMask.NameToLayer("Ground"));
         // Cache the horizontal input.
         float h = Input.GetAxis("Horizontal");
-
+        bool backwards = (h > 0 && !facingRight) || (h < 0 && facingRight);
+        //Set animation paramaters
         anim.SetBool("Grounded", grounded);
         anim.SetFloat("VerSpeed", rb.velocity.y);
         anim.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
@@ -57,6 +60,7 @@ public class PlayerController : MonoBehaviour
             crossHandTimer = 0f;
         }
 
+        //Dynamic gravity scale for satisfying jump
         if (grounded)
         {
             rb.gravityScale = defaultGravityScale;
@@ -66,24 +70,33 @@ public class PlayerController : MonoBehaviour
         if (rb.velocity.y < -0.3 && !grounded)
             rb.gravityScale = defaultGravityScale * fallMultiplier;
 
+        //Run duration Calculation
         if(grounded && Input.GetAxis("Run") == 1 && h != 0)
         {
             durationRun += Time.fixedDeltaTime;
-        } else if(Input.GetAxis("Run") == 0 || h == 0)
+        } else if(Input.GetAxis("Run") == 0 || h == 0 || backwards)
         {
             durationRun = 0;
         }
 
-        // If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
+        //Move the player
         if (h != 0)
         {
-            // ... add a force to the player.
             if (grounded)
+                //Ground movement
                 rb.AddForce(new Vector2(h * moveForce * Time.fixedDeltaTime, 0));
             else if(rb.velocity.x < maxSpeed)
+                //Air Movement, move dampened
                 rb.AddForce(new Vector2(h * moveForce * airControlMultiplier * Time.fixedDeltaTime, 0));
 
-            float runSpeed =   durationRun > 1f ? maxSpeed * runMultiplier : maxSpeed;
+            //Increase maxspeed when sprinting
+            float runSpeed; 
+            //Decrease maxspeed if walking backwards
+            if (backwards && knight.active)
+                runSpeed = maxSpeed * 0.5f;
+            else
+                runSpeed = durationRun > 1f ? maxSpeed * runMultiplier : maxSpeed;
+
             if (rb.velocity.x > runSpeed)
                 rb.velocity = new Vector2(runSpeed, rb.velocity.y);
             if (rb.velocity.x < runSpeed * -1)
@@ -91,37 +104,27 @@ public class PlayerController : MonoBehaviour
         }
         else if (grounded && rb.velocity.x != 0)
         {
+            //Braking
             rb.AddForce(new Vector2(rb.velocity.x * -1 * horizontalDrag * Time.fixedDeltaTime, 0));
         }
 
-        // If the input is moving the player right and the player is facing left...
-        if (h > 0 && !facingRight)
-			// ... flip the player.
-			Flip();
-		// Otherwise if the input is moving the player left and the player is facing right...
-		else if(h < 0 && facingRight)
-			// ... flip the player.
+        // Flip player
+        if (backwards && !knight.active)
 			Flip();
 
-		// If the player should jump...
+		// Jump action
 		if((Input.GetButtonDown("Jump")) && grounded)
 		{
             durationRun = 0;
-			// Set the Jump animator trigger parameter.
 			anim.SetTrigger("Jump");
-			//reset the y velocity
 			rb.velocity = new Vector2(rb.velocity.x, 0f) ;
-			// Add a vertical force to the player.
 			rb.AddForce(new Vector2(0f, jumpForce));
 		}
 	}
 	
-	
 	void Flip ()
 	{
-		// Switch the way the player is labelled as facing.
 		facingRight = !facingRight;
-		// Multiply the player's x local scale by -1.
 		Vector3 theScale = transform.localScale;
 		theScale.x *= -1;
 		transform.localScale = theScale;
