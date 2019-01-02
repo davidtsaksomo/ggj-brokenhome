@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 	public float maxSpeed = 5f;				// The fastest the player can travel in the x axis.
 	public float jumpForce = 1000f;			// Amount of force added when the player jumps.
     public float horizontalDrag = 0.3f;
-
+    public float runMultiplier = 1.5f;
     public float fallMultiplier = 2.5f;
     public float releaseMultiplier = 2f;
     public float airControlMultiplier = 0.5f;
@@ -22,8 +22,9 @@ public class PlayerController : MonoBehaviour
 	private float crossHandTimer = 0f;
     private Rigidbody2D rb;
     private float defaultGravityScale;
-     
-	void Awake()
+    public float durationRun = 0;
+
+    void Awake()
 	{
 		// Setting up references.
 		anim = GetComponent<Animator>();
@@ -65,19 +66,28 @@ public class PlayerController : MonoBehaviour
         if (rb.velocity.y < -0.3 && !grounded)
             rb.gravityScale = defaultGravityScale * fallMultiplier;
 
-		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-		if(h != 0)
+        if(grounded && Input.GetAxis("Run") == 1 && h != 0)
+        {
+            durationRun += Time.fixedDeltaTime;
+        } else if(Input.GetAxis("Run") == 0 || h == 0)
+        {
+            durationRun = 0;
+        }
+
+        // If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
+        if (h != 0)
         {
             // ... add a force to the player.
             if (grounded)
                 rb.AddForce(new Vector2(h * moveForce * Time.fixedDeltaTime, 0));
-            else
+            else if(rb.velocity.x < maxSpeed)
                 rb.AddForce(new Vector2(h * moveForce * airControlMultiplier * Time.fixedDeltaTime, 0));
 
-            if (rb.velocity.x > maxSpeed)
-                rb.velocity = new Vector2(maxSpeed, rb.velocity.y);
-            if (rb.velocity.x < maxSpeed*-1)
-                rb.velocity = new Vector2(maxSpeed*-1, rb.velocity.y);
+            float runSpeed =   durationRun > 1f ? maxSpeed * runMultiplier : maxSpeed;
+            if (rb.velocity.x > runSpeed)
+                rb.velocity = new Vector2(runSpeed, rb.velocity.y);
+            if (rb.velocity.x < runSpeed * -1)
+                rb.velocity = new Vector2(runSpeed * -1, rb.velocity.y);
         }
         else if (grounded && rb.velocity.x != 0)
         {
@@ -96,6 +106,7 @@ public class PlayerController : MonoBehaviour
 		// If the player should jump...
 		if((Input.GetButtonDown("Jump")) && grounded)
 		{
+            durationRun = 0;
 			// Set the Jump animator trigger parameter.
 			anim.SetTrigger("Jump");
 			//reset the y velocity
