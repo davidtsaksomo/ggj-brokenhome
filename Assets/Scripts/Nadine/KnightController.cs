@@ -31,11 +31,13 @@ public class KnightController : MonoBehaviour
         if (!shield && Input.GetAxis("Shield") == 1)
         {
             knight.GetComponent<Animator>().SetBool("shield", true);
+            knight.layer = LayerMask.NameToLayer("Shield");
             shield = true;
         }
         if (shield && Input.GetAxis("Knight") == 1 && Input.GetAxis("Shield") == 0)
         {
             knight.GetComponent<Animator>().SetBool("shield", false);
+            knight.layer = LayerMask.NameToLayer("Lance");
             shield = false;
         }
 

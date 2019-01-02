@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject knightpivot;
 
+    private Vector3 respawnPoint;
     void Awake()
 	{
 		anim = GetComponent<Animator>();
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
         knight = GetComponent<KnightController>();
 
         defaultGravityScale = rb.gravityScale;
+        respawnPoint = transform.position;
     }
 
     void FixedUpdate ()
@@ -144,4 +146,8 @@ public class PlayerController : MonoBehaviour
 		transform.localScale = theScale;
 	}
 
+    public void Respawn()
+    {
+        transform.position = respawnPoint;
+    }
 }
