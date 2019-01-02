@@ -24,7 +24,9 @@ public class PlayerController : MonoBehaviour
 
     private float crossHandTimer = 0f;
     private float defaultGravityScale;
-    public float durationRun = 0;
+    private float durationRun = 0;
+
+    public GameObject knightpivot;
 
     void Awake()
 	{
@@ -120,7 +122,19 @@ public class PlayerController : MonoBehaviour
 			rb.velocity = new Vector2(rb.velocity.x, 0f) ;
 			rb.AddForce(new Vector2(0f, jumpForce));
 		}
-	}
+
+        //Rotating the knight
+        float verticalAxis = Input.GetAxis("Vertical");
+        float maxDegree = 20f;
+        if(!grounded && verticalAxis < 0)
+        {
+            maxDegree = 90f;
+        }
+        float rotation = verticalAxis * maxDegree;
+        if (!facingRight)
+            rotation = rotation * -1;
+        knightpivot.GetComponent<Transform>().rotation = Quaternion.Euler(0f, 0f, rotation);
+    }
 	
 	void Flip ()
 	{

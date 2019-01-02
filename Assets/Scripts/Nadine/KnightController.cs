@@ -6,7 +6,6 @@ using UnityEngine;
 public class KnightController : MonoBehaviour
 {
     public GameObject knight;
-    public GameObject knightpivot;
 
     [HideInInspector]
     public bool shield = false;
@@ -39,8 +38,6 @@ public class KnightController : MonoBehaviour
             knight.GetComponent<Animator>().SetBool("shield", false);
             shield = false;
         }
-        //Rotating the knight
-        float rotation = Input.GetAxis("RightVertical");
-        knightpivot.GetComponent<Transform>().rotation = Quaternion.Euler(0f, 0f, rotation * 20f);
+
     }
 }

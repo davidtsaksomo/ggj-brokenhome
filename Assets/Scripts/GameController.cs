@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour {
 	{
 		//Load Starting Scene
 		scenecontroller = GetComponent<SceneController> ();
-		yield return StartCoroutine (scenecontroller.LoadSceneAndSetActive (startingSceneName));
+        if (startingSceneName != "")
+		    yield return StartCoroutine (scenecontroller.LoadSceneAndSetActive (startingSceneName));
 	}
 }
