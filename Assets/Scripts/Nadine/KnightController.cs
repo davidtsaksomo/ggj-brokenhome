@@ -11,35 +11,64 @@ public class KnightController : MonoBehaviour
     public bool shield = false;
     [HideInInspector]
     public bool active = false;
-
+    private bool somersault = false;
     void Update()
     {
-        //Activating the knight
-        if (!active && (Input.GetAxis("Knight") == 1 || Input.GetAxis("Shield") == 1))
+
+
+        if (somersault)
         {
-            knight.SetActive(true);
-            knight.GetComponent<Animator>().SetBool("shield", shield);
-            active = true;
+            if (!knight.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("knight_somersault"))
+            {
+                somersault = false;
+            }
         }
-        if (active && (Input.GetAxis("Knight") == 0 && Input.GetAxis("Shield") == 0))
+        else
         {
-            knight.SetActive(false);
-            active = false;
+            //Activating the knight
+            if (!active && (Input.GetAxis("Knight") == 1 || Input.GetAxis("Shield") == 1))
+            {
+                knight.SetActive(true);
+                knight.GetComponent<Animator>().SetBool("shield", shield);
+                active = true;
+            }
+            if (active && (Input.GetAxis("Knight") == 0 && Input.GetAxis("Shield") == 0))
+            {
+                knight.SetActive(false);
+                active = false;
+            }
+
+            //Toggle between attack and defense
+            if (!shield && Input.GetAxis("Shield") == 1)
+            {
+                knight.GetComponent<Animator>().SetBool("shield", true);
+                knight.layer = LayerMask.NameToLayer("Shield");
+                shield = true;
+            }
+            if (shield && Input.GetAxis("Knight") == 1 && Input.GetAxis("Shield") == 0)
+            {
+                knight.GetComponent<Animator>().SetBool("shield", false);
+                knight.layer = LayerMask.NameToLayer("Lance");
+                shield = false;
+            }
+            if (Input.GetButtonDown("Somersault"))
+            {
+                knight.SetActive(true);
+                active = true;
+                somersault = true;
+                knight.GetComponent<Animator>().SetTrigger("somersault");
+
+            }
         }
 
-        //Toggle between attack and defense
-        if (!shield && Input.GetAxis("Shield") == 1)
-        {
-            knight.GetComponent<Animator>().SetBool("shield", true);
-            knight.layer = LayerMask.NameToLayer("Shield");
-            shield = true;
-        }
-        if (shield && Input.GetAxis("Knight") == 1 && Input.GetAxis("Shield") == 0)
-        {
-            knight.GetComponent<Animator>().SetBool("shield", false);
-            knight.layer = LayerMask.NameToLayer("Lance");
-            shield = false;
-        }
 
+    }
+
+    public void Rotate(float rotation)
+    {
+        if(active && !somersault)
+        {
+            knight.GetComponent<Transform>().rotation = Quaternion.Euler(0f, 0f, rotation);
+        }
     }
 }

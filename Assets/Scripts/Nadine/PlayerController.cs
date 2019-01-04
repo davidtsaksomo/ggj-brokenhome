@@ -24,9 +24,6 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Multiplier of horizontal control when on air")]
     [Range(0f, 1f)]
     public float airControlMultiplier = 0.5f;
-    [Space(10)]
-    [Tooltip("Reference to knight pivot GameObject")]
-    public GameObject knightpivot;
 
     [HideInInspector]
     public bool facingRight = true;         // For determining which way the player is currently facing.
@@ -83,6 +80,9 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("VerSpeed", rb.velocity.y);
         anim.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
         anim.SetFloat("Speed", !hold ? Mathf.Abs(h) : 0);
+
+        if (Input.GetAxis("Vertical") != -1)
+            anim.SetBool("Crouch", false);
 
         if (grounded)
         {
@@ -208,10 +208,14 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
+    }
+
+    void LateUpdate()
+    {
         RotateKnight();
     }
-	
-	void Flip ()
+
+    void Flip ()
 	{
 		facingRight = !facingRight;
 		Vector3 theScale = transform.localScale;
@@ -226,7 +230,9 @@ public class PlayerController : MonoBehaviour
         if (rb.velocity.x < runSpeed * -1)
             rb.velocity = new Vector2(runSpeed * -1, rb.velocity.y);
     }
-    
+
+
+
     void RotateKnight()
     {
         //Rotating the knight
@@ -242,7 +248,7 @@ public class PlayerController : MonoBehaviour
         float rotation = verticalAxis * maxDegree;
         if (!facingRight)
             rotation = rotation * -1;
-        knightpivot.GetComponent<Transform>().rotation = Quaternion.Euler(0f, 0f, rotation);
+        knight.Rotate(rotation);
     }
 
     void Deaccelerate()
