@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 public class KnightController : MonoBehaviour
 {
@@ -56,6 +53,7 @@ public class KnightController : MonoBehaviour
                 knight.SetActive(true);
                 active = true;
                 somersault = true;
+                shield = false;
                 knight.GetComponent<Animator>().SetTrigger("somersault");
 
             }

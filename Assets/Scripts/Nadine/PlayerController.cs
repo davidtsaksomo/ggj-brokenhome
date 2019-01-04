@@ -27,12 +27,19 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector]
     public bool facingRight = true;         // For determining which way the player is currently facing.
-    private Transform groundCheck;			// A position marking where to check if the player is grounded.
 	private bool grounded = false;			// Whether or not the player is grounded.
     [Tooltip("Target of groundcheck raycast")]
     public Transform[] groundChecks;
 
-	private Animator anim;					
+    [Header("Ledge Movement")]
+    public LedgeDetector ledgeDetector;
+    public float ledgeUpForce;
+    private bool rightLedge;
+
+    [Space(10)]
+    public GameObject nadineCollider;
+
+    private Animator anim;					
     private Rigidbody2D rb;
     private KnightController knight;
 
@@ -41,12 +48,14 @@ public class PlayerController : MonoBehaviour
     private float durationRun = 0;
 
     private Vector3 respawnPoint;
+
     [HideInInspector]
     public enum PlayerState {
         Grounded,
         OnAir,
         Crouching,
-        OnLedge
+        OnLedge,
+        WaitingLeap
     }
     private PlayerState state;
 
@@ -79,7 +88,7 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("Grounded", grounded);
         anim.SetFloat("VerSpeed", rb.velocity.y);
         anim.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
-        anim.SetFloat("Speed", !hold ? Mathf.Abs(h) : 0);
+        anim.SetFloat("Speed", !hold && grounded ? Mathf.Abs(h) : 0);
 
         if (Input.GetAxis("Vertical") != -1)
             anim.SetBool("Crouch", false);
@@ -87,12 +96,22 @@ public class PlayerController : MonoBehaviour
         if (grounded)
         {
             rb.gravityScale = defaultGravityScale;
-            if (state == PlayerState.OnAir)
+            if (state == PlayerState.OnAir || state == PlayerState.WaitingLeap)
                 state = PlayerState.Grounded;
         }
         else if (state == PlayerState.Grounded || state == PlayerState.Crouching)
         {
             state = PlayerState.OnAir;
+        }
+
+        //If encounter a ledge grab it
+        if (state == PlayerState.OnAir && rb.velocity.y < -0.3)
+        {
+            if (ledgeDetector.DetectLedge(this))
+            {
+                state = PlayerState.OnLedge;
+                ledgeDetector.ColliderSetActive(true);
+            }
         }
 
         switch (state)
@@ -108,6 +127,7 @@ public class PlayerController : MonoBehaviour
                 {
                     crossHandTimer = 0f;
                 }
+
 
                 //Run duration Calculation
                 if (Input.GetAxis("Run") == 1 && h != 0)
@@ -167,9 +187,13 @@ public class PlayerController : MonoBehaviour
             case PlayerState.OnAir:
                 //Dynamic gravity scale for satisfying jump
                 if (rb.velocity.y > 0.3 && !Input.GetButton("Jump"))
+                {
                     rb.gravityScale = defaultGravityScale * releaseMultiplier;
-                if (rb.velocity.y < -0.3)
+                }
+                else if (rb.velocity.y < -0.3)
+                {
                     rb.gravityScale = defaultGravityScale * fallMultiplier;
+                }
 
                 //Move the player
                 if (h != 0)
@@ -205,14 +229,55 @@ public class PlayerController : MonoBehaviour
                     Flip();
                 break;
             case PlayerState.OnLedge:
+                if (Input.GetAxis("Vertical") == -1 && Input.GetAxis("Jump") == 1)
+                {
+                    state = PlayerState.OnAir;
+                    ledgeDetector.ColliderSetActive(false);
+                } else if (Input.GetButtonDown("Jump"))
+                {
+                    ledgeDetector.ColliderSetActive(false);
+                    float delta = facingRight ? ledgeDetector.raycastDistance * -1.1f : ledgeDetector.raycastDistance * 1.1f;
+                    transform.position = new Vector3(transform.position.x + delta, transform.position.y, transform.position.z);
+                    rb.AddForce(new Vector2(0f, ledgeUpForce), ForceMode2D.Impulse);
+                    rightLedge = facingRight;
+                    state = PlayerState.WaitingLeap;
+                    StartCoroutine(AfterLedge(ledgeDetector.transform.position.y));
+                }
+                break;
+            case PlayerState.WaitingLeap:
+
+                if ((h < 0 && rightLedge) || (h > 0 && !rightLedge))
+                {
+                    rb.AddForce(new Vector2(h * moveForce * airControlMultiplier * Time.fixedDeltaTime, 0));
+                    float runSpeed;
+                    //Decrease maxspeed if walking backwards
+                    if (backwards && knight.active)
+                        runSpeed = maxSpeed * 0.5f;
+                    else
+                        runSpeed = maxSpeed;
+                    LimitSpeed(runSpeed);
+                }
+
                 break;
         }
 
     }
 
+
     void LateUpdate()
     {
         RotateKnight();
+    }
+
+    IEnumerator AfterLedge(float height)
+    {
+        float time = 0f;
+        while(groundChecks[0].position.y <= height && time < 0.1f)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+        state = PlayerState.OnAir;
     }
 
     void Flip ()
