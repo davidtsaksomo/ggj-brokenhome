@@ -140,25 +140,17 @@ public class PlayerController : MonoBehaviour
                 }
 
                 //Move the player
-                if (h != 0)
+                if (h != 0 && !hold)
                 {
-                    if (!hold)
-                    {
-                        rb.AddForce(new Vector2(h * moveForce * Time.fixedDeltaTime, 0));
-                        float runSpeed;
-                        //Decrease maxspeed if walking backwards, Increase while Sprinting
-                        if (backwards && knight.active)
-                            runSpeed = maxSpeed * 0.5f;
-                        else
-                            runSpeed = durationRun > 1f ? maxSpeed * runMultiplier : maxSpeed;
-
-                        LimitSpeed(runSpeed);
-                    }
+                    rb.AddForce(new Vector2(h * moveForce * Time.fixedDeltaTime, 0));
+                    float runSpeed;
+                    //Decrease maxspeed if walking backwards, Increase while Sprinting
+                    if (backwards && knight.IsHold())
+                        runSpeed = maxSpeed * 0.5f;
                     else
-                    {
-                        Deaccelerate();
-                    }
+                        runSpeed = durationRun > 1f ? maxSpeed * runMultiplier : maxSpeed;
 
+                    LimitSpeed(runSpeed);
                 }
                 else if (rb.velocity.x != 0)
                 {
@@ -180,7 +172,7 @@ public class PlayerController : MonoBehaviour
                 }
 
                 // Flip player
-                if (backwards && !knight.active)
+                if (backwards && !knight.IsHold())
                     Flip();
 
                 break;
@@ -202,7 +194,7 @@ public class PlayerController : MonoBehaviour
 
                     float runSpeed;
                     //Decrease maxspeed if walking backwards
-                    if (backwards && knight.active)
+                    if (backwards && knight.IsHold())
                         runSpeed = maxSpeed * 0.5f;
                     else
                         runSpeed = maxSpeed;
@@ -210,7 +202,7 @@ public class PlayerController : MonoBehaviour
                 }
 
                 // Flip player
-                if (backwards && !knight.active)
+                if (backwards && !knight.IsHold())
                     Flip();
 
                 break;
@@ -225,7 +217,7 @@ public class PlayerController : MonoBehaviour
                     Deaccelerate();
                 }
                 // Flip player
-                if (backwards && !knight.active)
+                if (backwards && !knight.IsHold())
                     Flip();
                 break;
             case PlayerState.OnLedge:
@@ -251,7 +243,7 @@ public class PlayerController : MonoBehaviour
                     rb.AddForce(new Vector2(h * moveForce * airControlMultiplier * Time.fixedDeltaTime, 0));
                     float runSpeed;
                     //Decrease maxspeed if walking backwards
-                    if (backwards && knight.active)
+                    if (backwards && knight.IsHold())
                         runSpeed = maxSpeed * 0.5f;
                     else
                         runSpeed = maxSpeed;
@@ -261,6 +253,13 @@ public class PlayerController : MonoBehaviour
                 break;
         }
 
+        if (Input.GetButtonDown("Knight"))
+        {
+            if(state == PlayerState.Crouching || state == PlayerState.Grounded)
+                knight.Attack();
+            else
+                knight.Somersault();
+        }
     }
 
 
@@ -324,5 +323,14 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
+    }
+
+    void OnDrawGizmos()
+    {
+        //Draw raycast
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, groundChecks[0].position);
+        Gizmos.DrawLine(transform.position, groundChecks[1].position);
+
     }
 }
