@@ -2,18 +2,31 @@
 
 public class KnightController : MonoBehaviour
 {
+    [Tooltip("Reference to Knight Pivot Object")]
     public GameObject knight;
+    [Tooltip("Reference to Lance Object")]
+    public GameObject lance;
 
-
+    [Header("Ground Attack")]
+    [Tooltip("Attack Hitbox Size")]
+    public Vector2 hitbox;
+    [Tooltip("Time before combo resets")]
     public float attackStandbyTime;
+    [Tooltip("Minimum time between attack command")]
     public float betweenAttackTime;
-    public float somersaultTime;
+    [Tooltip("Force applied to enemy when attack connects")]
+    public float attackForce;
 
+    [Header("Air Attack")]
+    public float hitRadius;
+    [Tooltip("Duration of doing somersault")]
+    public float somersaultTime;
+    [Tooltip("Force applied to enemy when attack connects")]
+    public float airAttackForce;
 
     private float timer = 0f;
     private float standbyTimer = 0f;
     private float somersaultTimer = 0f;
-
 
     [HideInInspector]
     public KnightState state = KnightState.NonActive;
@@ -99,6 +112,7 @@ public class KnightController : MonoBehaviour
         {
             timer = betweenAttackTime;
             knight.SetActive(true);
+
             switch (phase)
             {
                 case AttackPhase.Phase1:
@@ -114,6 +128,15 @@ public class KnightController : MonoBehaviour
                     phase = AttackPhase.Phase1;
                     break;
             }
+
+            Collider2D[] enemies = Physics2D.OverlapBoxAll(lance.transform.position, hitbox, 0f, 1 << LayerMask.NameToLayer("Enemy"));
+            foreach (Collider2D col in enemies)
+            {
+                col.GetComponent<Enemy>().TakeDamage(1);
+                float force = GetComponent<PlayerController>().facingRight ? attackForce : -1 * attackForce;
+                col.GetComponent<Rigidbody2D>().AddForce(new Vector2(force, 0), ForceMode2D.Impulse);
+            }
+
             standbyTimer = attackStandbyTime;
             state = KnightState.Standby;
         }
@@ -127,8 +150,16 @@ public class KnightController : MonoBehaviour
             anim.SetTrigger("somersault");
             state = KnightState.Somersault;
             somersaultTimer = somersaultTime;
+            Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, hitRadius, 1 << LayerMask.NameToLayer("Enemy"));
+            foreach (Collider2D col in enemies)
+            {
+                col.GetComponent<Enemy>().TakeDamage(2);
+                Vector3 normal = col.transform.position - transform.position;
+                normal.Normalize();
+                float force = GetComponent<PlayerController>().facingRight ? airAttackForce : -1 * airAttackForce;
+                col.GetComponent<Rigidbody2D>().AddForce(force * normal, ForceMode2D.Impulse);
+            }
         }
-
     }
 
     public void Rotate(float rotation)
@@ -141,6 +172,14 @@ public class KnightController : MonoBehaviour
 
     public bool IsHold()
     {
-        return state != KnightState.NonActive;
+        return state == KnightState.Somersault;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(lance.transform.position, hitbox);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, hitRadius);
     }
 }

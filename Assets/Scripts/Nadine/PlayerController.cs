@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Max speed multiplier when sprinting")]
     [Range(1f, 5f)]
     public float runMultiplier = 1.5f;
+
     [Space(10)]
     [Header("Jump Movement")]
     [Tooltip("Force applied to do jumps")]
@@ -32,11 +33,14 @@ public class PlayerController : MonoBehaviour
     public Transform[] groundChecks;
 
     [Header("Ledge Movement")]
+    [Tooltip("Reference to ledge Detector Objject")]
     public LedgeDetector ledgeDetector;
+    [Tooltip("Force aplied when jump while grabbing ledge")]
     public float ledgeUpForce;
     private bool rightLedge;
 
     [Space(10)]
+    [Tooltip("Reference to Nadine Collider Object")]
     public GameObject nadineCollider;
 
     private Animator anim;					
