@@ -156,8 +156,7 @@ public class KnightController : MonoBehaviour
                 col.GetComponent<Enemy>().TakeDamage(2);
                 Vector3 normal = col.transform.position - transform.position;
                 normal.Normalize();
-                float force = GetComponent<PlayerController>().facingRight ? airAttackForce : -1 * airAttackForce;
-                col.GetComponent<Rigidbody2D>().AddForce(force * normal, ForceMode2D.Impulse);
+                col.GetComponent<Rigidbody2D>().AddForce(airAttackForce * normal, ForceMode2D.Impulse);
             }
         }
     }
