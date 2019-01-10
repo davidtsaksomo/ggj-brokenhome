@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
     public Transform[] groundChecks;
 
     [Header("Ledge Movement")]
-    [Tooltip("Reference to ledge Detector Objject")]
+    [Tooltip("Reference to ledge Detector Object")]
     public LedgeDetector ledgeDetector;
     [Tooltip("Force aplied when jump while grabbing ledge")]
     public float ledgeUpForce;
@@ -327,6 +327,7 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         transform.position = respawnPoint;
+        state = PlayerState.Grounded;
     }
 
     void OnDrawGizmos()
