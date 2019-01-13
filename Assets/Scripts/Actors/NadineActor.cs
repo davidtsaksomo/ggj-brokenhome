@@ -4,8 +4,8 @@ using UnityEngine;
 
 /**
     TODO:
-    - Urus state crouching
-    - Urus walk dan animasinya
+    - Actions
+    - Crouch Action? Bisa sambil Attack and defend
  */
 
 public class NadineActor : Actor
@@ -70,15 +70,18 @@ public class NadineActor : Actor
         switch (positionState)
         {
             case PositionStates.Grounded:
-                crossHandTimer += Time.fixedDeltaTime;
-                if (crossHandTimer > 5f)
-                {
-                    animator.SetTrigger("Cross");
-                    crossHandTimer = 0;
-                }
+
                 if (Input.anyKey)
                 {
                     crossHandTimer = 0f;
+                } else
+                {
+                    crossHandTimer += Time.fixedDeltaTime;
+                    if (crossHandTimer > 5f)
+                    {
+                        animator.SetTrigger("Cross");
+                        crossHandTimer = 0;
+                    }
                 }
                 break;
         }
@@ -88,12 +91,12 @@ public class NadineActor : Actor
     {
         foreach (Transform gc in groundChecks)
         {
-            if (!Physics2D.Linecast(transform.position, gc.position, 1 << LayerMask.NameToLayer("Ground")))
+            if (Physics2D.Linecast(transform.position, gc.position, 1 << LayerMask.NameToLayer("Ground")))
             {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public override void SetJumpTrigger()
