@@ -10,21 +10,18 @@ using UnityEngine;
 
 public class NadineActor : Actor
 {
-    [HideInInspector]
-    public bool facingRight;
 
-    [HideInInspector]
+    //[HideInInspector]
     public PositionStates positionState;
-
-    [HideInInspector]
+    //[HideInInspector]
     public GazeStates gazeState;
-
-    [HideInInspector]
+    //[HideInInspector]
     public MobilityStates mobilityState;
 
     private float crossHandTimer = 0f;
-    private Animator animator;
     private Rigidbody2D rb;
+
+
 
     public override void Awake()
     {
@@ -35,20 +32,40 @@ public class NadineActor : Actor
 
         // inherited variables
         spawnPosition = transform.position;
-        controller = GetComponent<Controller>();
     }
-    public void FixedUpdate()
+
+
+    public void StateUpdate(bool hold)
     {
-        float horizontalAxisInput = Input.GetAxis("Horizontal");
-        float verticalAxisInput = Input.GetAxis("Vertical");
+        if (IsGrounded())
+        {
+            if (positionState == PositionStates.OnAir)
+                positionState = PositionStates.Grounded;
+        }
+        else if (positionState == PositionStates.Grounded)
+        {
+            positionState = PositionStates.OnAir;
+        }
 
+        if (hold)
+        {
+            mobilityState = MobilityStates.CannotMove;
+        }
+        else if (mobilityState == MobilityStates.CannotMove)
+        {
+            mobilityState = MobilityStates.Idle;
+        }
+
+    }
+
+    public void AnimationUpdate(float horizontalAxisInput, float verticalAxisInput, bool hold)
+    {
         bool grounded = (positionState == PositionStates.Grounded);
-        bool hold = Input.GetAxis("Hold") == 1;
-
         animator.SetBool("Grounded", grounded);
         animator.SetFloat("VerSpeed", rb.velocity.y);
         animator.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
         animator.SetFloat("Speed", !hold && grounded ? Mathf.Abs(horizontalAxisInput) : 0);
+
 
         switch (positionState)
         {
@@ -63,16 +80,26 @@ public class NadineActor : Actor
                 {
                     crossHandTimer = 0f;
                 }
-
-                if ((Input.GetButtonDown("Jump")))
-                {
-                    animator.SetTrigger("Jump");
-                } else if (Input.GetAxis("Vertical") == -1)
-                {
-                    animator.SetBool("Crouch", true);
-                }
                 break;
         }
+    }
+
+    bool IsGrounded()
+    {
+        foreach (Transform gc in groundChecks)
+        {
+            if (!Physics2D.Linecast(transform.position, gc.position, 1 << LayerMask.NameToLayer("Ground")))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public override void SetJumpTrigger()
+    {
+        animator.SetTrigger("Jump");
+
     }
 
     public override PositionStates GetPositionState()

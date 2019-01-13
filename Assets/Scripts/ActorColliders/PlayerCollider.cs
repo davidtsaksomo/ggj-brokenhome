@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ActorCollider2D : MonoBehaviour
+public class PlayerCollider : MonoBehaviour
 {
     public Actor actor;
-
-    void Awake()
-    {
-        CapsuleCollider2D collider = gameObject.AddComponent(typeof(CapsuleCollider2D)) as CapsuleCollider2D;
-        actor = GetComponent<Actor>();
-    }
 
     void OnCollisionEnter2D(Collision2D coll)
     {
