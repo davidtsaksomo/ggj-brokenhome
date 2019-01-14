@@ -4,11 +4,11 @@ using UnityEngine;
 
 public abstract class Actor : MonoBehaviour
 {
-    [HideInInspector]
-    public Controller controller;
-    
+
     public GameObject actorCollider;
     public Vector3 spawnPosition;
+    public Transform[] groundChecks;
+    protected Animator animator;
 
     public virtual void Awake()
     {
@@ -19,6 +19,12 @@ public abstract class Actor : MonoBehaviour
     {
         transform.position = spawnPosition;
     }
+
+    public virtual void SetJumpTrigger()
+    {}
+
+    public virtual void SetCrouchBool(bool crouch)
+    {}
 
     public virtual PositionStates GetPositionState()
     {
@@ -48,4 +54,5 @@ public abstract class Actor : MonoBehaviour
 
     public virtual void SetMobilityState(MobilityStates newState)
     {}
+
 }
