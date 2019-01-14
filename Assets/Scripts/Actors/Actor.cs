@@ -21,9 +21,10 @@ public abstract class Actor : MonoBehaviour
     }
 
     public virtual void SetJumpTrigger()
-    {
+    {}
 
-    }
+    public virtual void SetCrouchBool(bool crouch)
+    {}
 
     public virtual PositionStates GetPositionState()
     {

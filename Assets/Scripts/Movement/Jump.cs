@@ -60,7 +60,7 @@ public class Jump : MonoBehaviour
                 break;
 
             case PositionStates.OnLedge:
-                if (verticalAxisInput == -1 && jumpAxis > 0.3f)
+                if (verticalAxisInput < -0.3f && jumpAxis == 1)
                 {
                     actor.SetPositionState(PositionStates.OnAir);
                     ledgeDetector.ColliderSetActive(false);

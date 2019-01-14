@@ -2,21 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/**
-    TODO:
-    - Actions
-    - Crouch Action? Bisa sambil Attack and defend
- */
-
 public class NadineActor : Actor
 {
 
-    //[HideInInspector]
     public PositionStates positionState;
-    //[HideInInspector]
     public GazeStates gazeState;
-    //[HideInInspector]
     public MobilityStates mobilityState;
+    public ActionStates actionState;
+
 
     private float crossHandTimer = 0f;
     private Rigidbody2D rb;
@@ -27,6 +20,7 @@ public class NadineActor : Actor
     {
         positionState = PositionStates.Grounded;
         mobilityState = MobilityStates.Idle;
+        actionState = ActionStates.Idle;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
@@ -47,7 +41,7 @@ public class NadineActor : Actor
             positionState = PositionStates.OnAir;
         }
 
-        if (hold)
+        if (hold || actionState == ActionStates.Crouching)
         {
             mobilityState = MobilityStates.CannotMove;
         }
@@ -102,7 +96,11 @@ public class NadineActor : Actor
     public override void SetJumpTrigger()
     {
         animator.SetTrigger("Jump");
+    }
 
+    public override void SetCrouchBool(bool crouch)
+    {
+        animator.SetBool("Crouch", crouch);
     }
 
     public override PositionStates GetPositionState()
@@ -131,4 +129,14 @@ public class NadineActor : Actor
     {
         mobilityState = newState;
     }
+
+    public override ActionStates GetActionState()
+    {
+        return actionState;
+    }
+    public override void SetActionState(ActionStates newState)
+    {
+        actionState = newState;
+    }
 }
+
