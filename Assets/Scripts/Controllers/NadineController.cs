@@ -27,7 +27,7 @@ public class NadineController : MonoBehaviour
         }
         GetComponent<NadineActor>().StateUpdate(hold);
         GetComponent<NadineActor>().AnimationUpdate(horizontalAxisInput, verticalAxisInput, hold);
-        GetComponent<LedgeDetector_>().LedgeDetectorUpdate();
+        GetComponent<LedgeDetector>().LedgeDetectorUpdate();
         GetComponent<Move>().MoveUpdate(horizontalAxisInput);
         GetComponent<Jump>().JumpUpdate(jumpButtonDown, jumpButton, jumpAxis, verticalAxisInput);
         GetComponent<Crouch>().CrouchUpdate(verticalAxisInput);

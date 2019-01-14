@@ -17,7 +17,7 @@ public class Jump : MonoBehaviour
     public float ledgeUpForce;
 
     private Actor actor;
-    private LedgeDetector_ ledgeDetector;
+    private LedgeDetector ledgeDetector;
     private Rigidbody2D rb;
     private float defaultGravityScale;
 
@@ -26,7 +26,7 @@ public class Jump : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         actor = GetComponent<Actor>();
-        ledgeDetector = GetComponent<LedgeDetector_>();
+        ledgeDetector = GetComponent<LedgeDetector>();
         defaultGravityScale = rb.gravityScale;
     }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LedgeDetector_ : MonoBehaviour
+public class LedgeDetector : MonoBehaviour
 {
     public float verticalDistance;
     public float raycastDistance;
