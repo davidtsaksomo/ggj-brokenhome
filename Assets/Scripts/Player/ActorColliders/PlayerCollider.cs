@@ -6,8 +6,8 @@ public class PlayerCollider : MonoBehaviour
 {
     public Actor actor;
 
-    void OnCollisionEnter2D(Collision2D coll)
+    void OnTriggerEnter2D(Collider2D coll)
     {
-
+        print(coll.tag);
     }
 }
