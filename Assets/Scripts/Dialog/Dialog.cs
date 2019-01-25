@@ -2,17 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dialog : MonoBehaviour
+[CreateAssetMenu(fileName = "Dialog", menuName = "Dialogs/Dialog")]
+public class Dialog : ScriptableObject 
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public string speaker;
+    public string[] sentences;
 }
