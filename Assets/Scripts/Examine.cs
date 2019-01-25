@@ -42,6 +42,7 @@ public class Examine : MonoBehaviour
                 Debug.Log("ClickedObject");
             clickedObject.transform.position = mainCam.transform.position + (transform.forward * 3f);
             examineMode = true;
+            Time.timeScale = 0;
             }  
         }
                      
