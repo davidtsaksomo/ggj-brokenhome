@@ -22,8 +22,6 @@ public class Flip : MonoBehaviour
                 theScale.x *= -1;
                 transform.localScale = theScale;
                 break;
-            case PositionStates.OnLedge:
-                break;
         }
     }
 }

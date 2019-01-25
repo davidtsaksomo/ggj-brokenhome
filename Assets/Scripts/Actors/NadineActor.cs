@@ -7,8 +7,6 @@ public class NadineActor : Actor
 
     public PositionStates positionState;
     public GazeStates gazeState;
-    public MobilityStates mobilityState;
-    public ActionStates actionState;
 
 
     private float crossHandTimer = 0f;
@@ -19,8 +17,6 @@ public class NadineActor : Actor
     public override void Awake()
     {
         positionState = PositionStates.Grounded;
-        mobilityState = MobilityStates.Idle;
-        actionState = ActionStates.Idle;
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
@@ -29,7 +25,7 @@ public class NadineActor : Actor
     }
 
 
-    public void StateUpdate(bool hold)
+    public void StateUpdate()
     {
         if (IsGrounded())
         {
@@ -40,25 +36,15 @@ public class NadineActor : Actor
         {
             positionState = PositionStates.OnAir;
         }
-
-        if (hold || actionState == ActionStates.Crouching)
-        {
-            mobilityState = MobilityStates.CannotMove;
-        }
-        else if (mobilityState == MobilityStates.CannotMove)
-        {
-            mobilityState = MobilityStates.Idle;
-        }
-
     }
 
-    public void AnimationUpdate(float horizontalAxisInput, float verticalAxisInput, bool hold)
+    public void AnimationUpdate(float horizontalAxisInput)
     {
         bool grounded = (positionState == PositionStates.Grounded);
         animator.SetBool("Grounded", grounded);
         animator.SetFloat("VerSpeed", rb.velocity.y);
         animator.SetFloat("HorSpeed", Mathf.Abs(rb.velocity.x));
-        animator.SetFloat("Speed", !hold && grounded ? Mathf.Abs(horizontalAxisInput) : 0);
+        animator.SetFloat("Speed", grounded ? Mathf.Abs(horizontalAxisInput) : 0);
 
 
         switch (positionState)
@@ -121,22 +107,5 @@ public class NadineActor : Actor
         gazeState = newState;
     }
 
-    public override MobilityStates GetMobilityState()
-    {
-        return mobilityState;
-    }
-    public override void SetMobilityState(MobilityStates newState)
-    {
-        mobilityState = newState;
-    }
-
-    public override ActionStates GetActionState()
-    {
-        return actionState;
-    }
-    public override void SetActionState(ActionStates newState)
-    {
-        actionState = newState;
-    }
 }
 

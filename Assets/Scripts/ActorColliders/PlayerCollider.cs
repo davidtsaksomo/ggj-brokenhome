@@ -8,9 +8,6 @@ public class PlayerCollider : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "Enemy" || (coll.gameObject.tag == "Harmful"))
-        {
-            actor.Respawn();
-        }
+
     }
 }

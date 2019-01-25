@@ -21,38 +21,22 @@ public abstract class Actor : MonoBehaviour
     }
 
     public virtual void SetJumpTrigger()
-    {}
+    { }
 
     public virtual void SetCrouchBool(bool crouch)
-    {}
+    { }
 
     public virtual PositionStates GetPositionState()
     {
         return PositionStates.Unknown;
     }
     public virtual void SetPositionState(PositionStates newState)
-    {}
-
-    public virtual ActionStates GetActionState()
-    {
-        return ActionStates.Unknown;
-    }
-    public virtual void SetActionState(ActionStates newState)
-    {}
+    { }
 
     public virtual GazeStates GetGazeState()
     {
         return GazeStates.Unknown;
     }
     public virtual void SetGazeState(GazeStates newState)
-    {}
-
-    public virtual MobilityStates GetMobilityState()
-    {
-        return MobilityStates.Unknown;
-    }
-
-    public virtual void SetMobilityState(MobilityStates newState)
-    {}
-
+    { }
 }

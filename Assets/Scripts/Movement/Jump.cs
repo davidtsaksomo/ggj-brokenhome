@@ -17,7 +17,6 @@ public class Jump : MonoBehaviour
     public float ledgeUpForce;
 
     private Actor actor;
-    private LedgeDetector ledgeDetector;
     private Rigidbody2D rb;
     private float defaultGravityScale;
 
@@ -26,7 +25,6 @@ public class Jump : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         actor = GetComponent<Actor>();
-        ledgeDetector = GetComponent<LedgeDetector>();
         defaultGravityScale = rb.gravityScale;
     }
 
@@ -57,19 +55,6 @@ public class Jump : MonoBehaviour
                     rb.gravityScale = defaultGravityScale * fallMultiplier;
                 }
                 actor.SetPositionState(PositionStates.OnAir);
-                break;
-
-            case PositionStates.OnLedge:
-                if (verticalAxisInput < -0.3f && jumpAxis == 1)
-                {
-                    actor.SetPositionState(PositionStates.OnAir);
-                    ledgeDetector.ColliderSetActive(false);
-                } else if (jumpButtonDown)
-                {
-                    ledgeDetector.ColliderSetActive(false);
-                    rb.AddForce(new Vector2(0f, ledgeUpForce), ForceMode2D.Impulse);
-                    actor.SetPositionState(PositionStates.OnAir);
-                }
                 break;
             
         }

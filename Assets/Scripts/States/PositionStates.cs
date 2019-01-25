@@ -2,6 +2,5 @@
 {
     Unknown,
     Grounded,
-    OnAir,
-    OnLedge
+    OnAir
 }

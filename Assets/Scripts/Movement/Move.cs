@@ -6,7 +6,6 @@ public class Move : MonoBehaviour
 {
     private Actor actor;
     private Rigidbody2D rb;
-    private bool cannotMove;
 
     [Tooltip("Force applied when moving horizontally")]
     public float moveForce = 50000f;
@@ -29,19 +28,13 @@ public class Move : MonoBehaviour
 
     public void MoveUpdate(float horizontalAxisInput)
     {
-        if(horizontalAxisInput < 0.1f && horizontalAxisInput > -0.1f)
-        {
-            actor.SetMobilityState(MobilityStates.Idle);
-        }
-        bool cannotMove = (actor.GetMobilityState() == MobilityStates.CannotMove);
 
         switch(actor.GetPositionState())
         {
             case PositionStates.Grounded:
-                if (horizontalAxisInput != 0 && !cannotMove)
+                if (horizontalAxisInput != 0)
                 {
                     rb.AddForce(new Vector2(horizontalAxisInput * moveForce * Time.fixedDeltaTime, 0));
-                    actor.SetMobilityState(MobilityStates.Moving);
                     LimitSpeed(maxSpeed);
                 }
                 else if (rb.velocity.x != 0)
@@ -50,14 +43,11 @@ public class Move : MonoBehaviour
                 }
                 break;
             case PositionStates.OnAir:
-                if (horizontalAxisInput != 0 && !cannotMove)
+                if (horizontalAxisInput != 0)
                 {
                     rb.AddForce(new Vector2(horizontalAxisInput * moveForce * airControlMultiplier * Time.fixedDeltaTime, 0));
-                    actor.SetMobilityState(MobilityStates.Moving);
                     LimitSpeed(maxSpeed);
                 }
-                break;
-            case PositionStates.OnLedge:
                 break;
         }
     }

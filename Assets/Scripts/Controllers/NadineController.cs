@@ -1,22 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class NadineController : MonoBehaviour
 {
     private Actor actor;
-    private SwordActor swordActor;
 
     void Awake()
     {
         actor = GetComponent<Actor>();
-        swordActor = GetComponent<SwordActor>();
     }
     public void FixedUpdate()
     {
         float horizontalAxisInput = Input.GetAxis("Horizontal");
         float verticalAxisInput = Input.GetAxis("Vertical");
-        bool hold = Input.GetAxis("Hold") == 1;
         bool jumpButtonDown = Input.GetButtonDown("Jump");
         bool jumpButton = Input.GetButton("Jump");
         float jumpAxis = Input.GetAxis("Jump");
@@ -25,15 +20,13 @@ public class NadineController : MonoBehaviour
         {
             horizontalAxisInput = 0;
         }
-        GetComponent<NadineActor>().StateUpdate(hold);
-        GetComponent<NadineActor>().AnimationUpdate(horizontalAxisInput, verticalAxisInput, hold);
-        GetComponent<LedgeDetector>().LedgeDetectorUpdate();
+        GetComponent<NadineActor>().StateUpdate();
+        GetComponent<NadineActor>().AnimationUpdate(horizontalAxisInput);
         GetComponent<Move>().MoveUpdate(horizontalAxisInput);
         GetComponent<Jump>().JumpUpdate(jumpButtonDown, jumpButton, jumpAxis, verticalAxisInput);
-        GetComponent<Crouch>().CrouchUpdate(verticalAxisInput);
 
         bool backwards = (horizontalAxisInput > 0 && actor.GetGazeState() == GazeStates.FacingLeft || (horizontalAxisInput < 0 && actor.GetGazeState() == GazeStates.FacingRight));
-        if(backwards && swordActor.GetSwordState() != SwordStates.Somersault)
+        if(backwards)
             GetComponent<Flip>().FlipActor();
     }   
 }
