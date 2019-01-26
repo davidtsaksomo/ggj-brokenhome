@@ -17,7 +17,11 @@ public class ItemController : MonoBehaviour
         
     }
 
-    void addItem(int i)
+    public bool getItem(int i)
+    {
+        return items[i];
+    }
+    public void addItem(int i)
     {
         if(items[i]==false){
             items[i] = true;
