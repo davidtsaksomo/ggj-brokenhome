@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 	
@@ -34,15 +34,14 @@ public class GameController : MonoBehaviour {
     }
 
     public GameState state;
-    private IEnumerator Start ()
+    private void Start ()
 	{
 		//Load Starting Scene
 		scenecontroller = GetComponent<SceneController> ();
-        if (startingSceneName != "")
-		    yield return StartCoroutine (scenecontroller.LoadSceneAndSetActive (startingSceneName));
 
         state = GameState.StartScreen;
-        //NadineController.cannotMove = true;
+        NadineController.cannotMove = true;
+        scenecontroller.SetActiveLast();
 	}
 
     private void Update()
@@ -66,4 +65,15 @@ public class GameController : MonoBehaviour {
         question.SetActive(false);
         NadineController.cannotMove = false;
     }
+
+    public void RestartGame()
+    {
+        overlay.SetActive(true);
+        question.SetActive(false);
+        startScreen.SetActive(true);
+        NadineController.cannotMove = true;
+        state = GameState.StartScreen;
+        SceneManager.LoadScene("Level");
+    }
 }
+

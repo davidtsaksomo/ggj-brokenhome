@@ -17,5 +17,10 @@ public class SceneController : MonoBehaviour
 		Scene newlyLoadedScene = SceneManager.GetSceneAt (SceneManager.sceneCount - 1);
 		SceneManager.SetActiveScene (newlyLoadedScene);
 	}
+    public void SetActiveLast()
+    {
+        Scene newlyLoadedScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
+        SceneManager.SetActiveScene(newlyLoadedScene);
+    }
 
 }

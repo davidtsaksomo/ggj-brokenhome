@@ -8,6 +8,9 @@ public class PlayerCollider : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D coll)
     {
-        print(coll.tag);
+        if (coll.tag == "End")
+        {
+            GameController.gameController.RestartGame();
+        }
     }
 }
