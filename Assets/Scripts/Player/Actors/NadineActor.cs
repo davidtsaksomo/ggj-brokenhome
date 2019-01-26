@@ -11,13 +11,14 @@ public class NadineActor : Actor
 
     private float crossHandTimer = 0f;
     private Rigidbody2D rb;
+    public GameObject body;
 
 
 
     public override void Awake()
     {
         positionState = PositionStates.Grounded;
-        animator = GetComponent<Animator>();
+        animator = body.GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
         // inherited variables
