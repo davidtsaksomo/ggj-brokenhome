@@ -6,7 +6,6 @@ public class Examine : MonoBehaviour
 {
     Camera mainCam;//Camera Object Will Be Placed In Front Of
     GameObject clickedObject;//Currently Clicked Object
- 
     //Holds Original Postion And Rotation So The Object Can Be Replaced Correctly
     Vector3 originaPosition;
     Vector3 originalRotation;
@@ -14,6 +13,8 @@ public class Examine : MonoBehaviour
     //If True Allow Rotation Of Object
     bool examineMode;
     bool isTaking = false;
+
+    int itemNum = 0;
  
     void Start()
     {
@@ -43,7 +44,21 @@ public class Examine : MonoBehaviour
             clickedObject.transform.position = mainCam.transform.position + (transform.forward * 3f);
             examineMode = true;
             Time.timeScale = 0;
-            }  
+            }
+            itemNum = checkName(clickedObject.name);
+            if(itemNum == 0){
+                Debug.Log("item name not found");
+            }
+            else{
+                Debug.Log(itemNum);
+                if(GameController.gameController.gameObject.GetComponent<ItemController>()==null){
+                    Debug.Log("null");
+                }
+                else{
+                GameController.gameController.gameObject.GetComponent<ItemController>().addItem(itemNum);
+                Debug.Log(GameController.gameController.gameObject.GetComponent<ItemController>().getItem(1));  
+                }
+            }
         }
                      
     }  
@@ -94,4 +109,21 @@ public class Examine : MonoBehaviour
 			isTaking = false;
 		}
 	}
+
+    int checkName(string i)
+    {
+        if(i == "item1"){
+            return 1;
+        }
+        if(i == "item2"){
+            return 2;
+        }
+        if(i == "item3"){
+            return 3;
+        }
+        if(i == "item4"){
+            return 4;
+        }
+        return 0;
+    }
 }
