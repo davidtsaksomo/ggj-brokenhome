@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class DialogManager : MonoBehaviour
 {
     public static DialogManager dialogmanager;
+    public GameObject dialogBox;
+    public Text speaker;
+    public Text sentence;
 
     private Queue<Dialog> dialogQueue;
     private Queue<string> sentenceQueue;
@@ -35,9 +40,12 @@ public class DialogManager : MonoBehaviour
             dialogQueue.Enqueue(dialog);
         }
         DisplayNextDialog();
+
+        dialogBox.SetActive(true);
+        NadineController.cannotMove = true;
     }
     
-    void DisplayNextDialog()
+    public void DisplayNextDialog()
     {
         if(dialogQueue.Count == 0)
         {
@@ -53,19 +61,24 @@ public class DialogManager : MonoBehaviour
         DisplayNextSentence();
     }
 
-    void DisplayNextSentence()
+    public void DisplayNextSentence()
     {
         if(sentenceQueue.Count == 0)
         {
             DisplayNextDialog();
             return;
         }
-        string sentence = sentenceQueue.Dequeue();
-        print(currentDialog.speaker + ": " + sentence);
+        string current_sentence = sentenceQueue.Dequeue();
+        speaker.text = currentDialog.speaker;
+        sentence.text = current_sentence;
     }
 
     void EndDialog()
     {
-        print("End conversation");
+        dialogBox.SetActive(false);
+        speaker.gameObject.SetActive(false);
+        sentence.gameObject.SetActive(false);
+        NadineController.cannotMove = false;
+
     }
 }

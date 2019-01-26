@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour {
 		scenecontroller = GetComponent<SceneController> ();
 
         state = GameState.StartScreen;
-        NadineController.cannotMove = true;
+        //NadineController.cannotMove = true;
         scenecontroller.SetActiveLast();
 	}
 
