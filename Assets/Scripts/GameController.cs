@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
 		    yield return StartCoroutine (scenecontroller.LoadSceneAndSetActive (startingSceneName));
 
         state = GameState.StartScreen;
-        NadineController.cannotMove = true;
+        //NadineController.cannotMove = true;
 	}
 
     private void Update()
