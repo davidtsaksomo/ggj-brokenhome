@@ -75,6 +75,8 @@ public class Examine : MonoBehaviour
  
            //Return To Normal State
            examineMode = false;
+
+           Destroy(clickedObject);
        }      
     }
 

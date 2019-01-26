@@ -13,6 +13,18 @@ public class GameController : MonoBehaviour {
     public GameObject startScreen;
     public GameObject question;
 
+    public static GameController gameController; 
+    void Awake()
+    {
+        if (gameController == null)
+        {
+            gameController = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
     public enum GameState
     {
         StartScreen,
