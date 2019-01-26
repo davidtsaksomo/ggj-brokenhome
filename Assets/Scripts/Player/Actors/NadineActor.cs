@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class NadineActor : Actor
 {
@@ -12,7 +13,7 @@ public class NadineActor : Actor
     private float crossHandTimer = 0f;
     private Rigidbody2D rb;
     public GameObject body;
-
+    public GameObject vCam;
 
 
     public override void Awake()
@@ -31,7 +32,9 @@ public class NadineActor : Actor
         if (IsGrounded())
         {
             if (positionState == PositionStates.OnAir)
+            {
                 positionState = PositionStates.Grounded;
+            }
         }
         else if (positionState == PositionStates.Grounded)
         {
