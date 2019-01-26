@@ -13,7 +13,7 @@ public class SkyController : MonoBehaviour
     Color currentColor;
     void Update()
     {
-        if(player.position.x > currentStep * cycleSteps)
+        if(player.position.x > currentStep * cycleSteps * 2)
         {
             ChangeSkyIndex();
             currentStep += 1;
