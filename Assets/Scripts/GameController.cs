@@ -5,15 +5,53 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 	
 	public string startingSceneName = "Demo";
-	public Text debugText;
 	SceneController scenecontroller;
     public DialogEvent events;
-	private IEnumerator Start ()
+
+    [Header("UI Objects")]
+    public GameObject overlay;
+    public GameObject startScreen;
+    public GameObject question;
+
+    public enum GameState
+    {
+        StartScreen,
+        Paused,
+        Running,
+        ItemInspect
+    }
+
+    public GameState state;
+    private IEnumerator Start ()
 	{
 		//Load Starting Scene
 		scenecontroller = GetComponent<SceneController> ();
         if (startingSceneName != "")
 		    yield return StartCoroutine (scenecontroller.LoadSceneAndSetActive (startingSceneName));
-        DialogManager.dialogmanager.StartDialogEvent(events);
+
+        state = GameState.StartScreen;
+        NadineController.cannotMove = true;
 	}
+
+    private void Update()
+    {
+        switch (state)
+        {
+            case GameState.StartScreen:
+                if (Input.GetButtonDown("Start"))
+                {
+                    startScreen.SetActive(false);
+                    question.SetActive(true);
+                    state = GameState.Paused;
+                }
+                break;
+        }
+    }
+
+    public void StartGame()
+    {
+        overlay.SetActive(false);
+        question.SetActive(false);
+        NadineController.cannotMove = false;
+    }
 }

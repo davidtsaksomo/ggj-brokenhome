@@ -3,6 +3,7 @@
 public class NadineController : MonoBehaviour
 {
     private Actor actor;
+    public static bool cannotMove = false; 
 
     void Awake()
     {
@@ -10,6 +11,9 @@ public class NadineController : MonoBehaviour
     }
     public void FixedUpdate()
     {
+        if (cannotMove)
+            return;
+
         float horizontalAxisInput = Input.GetAxis("Horizontal");
         float verticalAxisInput = Input.GetAxis("Vertical");
         bool jumpButtonDown = Input.GetButtonDown("Jump");

@@ -27,14 +27,6 @@ public class DialogManager : MonoBehaviour
         sentenceQueue = new Queue<string>();
     }
 
-    void Update()
-    {
-        if (Input.GetButtonDown("Jump"))
-        {
-            DisplayNextSentence();
-        }
-    }
-
     public void StartDialogEvent(DialogEvent dialogEvent)
     {
         dialogQueue.Clear();
