@@ -17,7 +17,7 @@ public class SkyController : MonoBehaviour
         {
             ChangeSkyIndex();
             currentStep += 1;
-            print("a");
+            player.localScale = new Vector3(player.localScale.x, player.localScale.y + 0.02f, player.localScale.z);
         }
     }
 
