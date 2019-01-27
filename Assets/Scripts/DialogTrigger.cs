@@ -8,18 +8,19 @@ public class DialogTrigger : MonoBehaviour
     bool once = true;
     void Update()
     {
-        if (Input.GetButtonDown("Submit"))
+        if (Input.GetButtonDown("Submit"))//GetButtonDown("Submit")
         {
-            DialogManager.dialogmanager.DisplayNextDialog();
+            DialogManager.dialogmanager.DisplayNextDialog();//DisplayNextDialog
         }
     }
     void OnTriggerEnter2D(Collider2D coll)
     {
-        if(coll.tag == "Player" && once)
+        Debug.Log(coll.tag);
+        Debug.Log(coll.name);
+        if (once)//coll.tag == "Player"//
         {
             DialogManager.dialogmanager.StartDialogEvent(dialogEvent);
             once = false;
-            print("berhasil");
         }
     }
 }

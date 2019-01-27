@@ -39,6 +39,8 @@ public class DialogManager : MonoBehaviour
         {
             dialogQueue.Enqueue(dialog);
         }
+        Debug.Log("Dialog Queue");
+        
         DisplayNextDialog();
 
         dialogBox.SetActive(true);
@@ -47,37 +49,50 @@ public class DialogManager : MonoBehaviour
     
     public void DisplayNextDialog()
     {
+        Debug.Log("New dialog started");
         if(dialogQueue.Count == 0)
         {
             EndDialog();
-            return;
         }
+        else{
         currentDialog = dialogQueue.Dequeue();
+        
         sentenceQueue.Clear();
         foreach (string sentence in currentDialog.sentences)
         {
             sentenceQueue.Enqueue(sentence);
         }
         DisplayNextSentence();
+        }
     }
 
     public void DisplayNextSentence()
     {
+        Debug.Log("Sentence COunt");
+        Debug.Log(sentenceQueue.Count);
         if(sentenceQueue.Count == 0)
         {
+            Debug.Log("Ayu Next");
             DisplayNextDialog();
-            return;
+        }
+        else{
+        Debug.Log("Sentence queueue");
+        foreach (string dialog in sentenceQueue){
+        //    Debug.Log(dialog);
         }
         string current_sentence = sentenceQueue.Dequeue();
+        //Debug.Log(1);
+        //Debug.Log(current_sentence);
         speaker.text = currentDialog.speaker;
         sentence.text = current_sentence;
+        }
     }
 
     void EndDialog()
     {
         dialogBox.SetActive(false);
-        speaker.gameObject.SetActive(false);
-        sentence.gameObject.SetActive(false);
+        //speaker.gameObject.SetActive(false);
+        //sentence.gameObject.SetActive(false);
         NadineController.cannotMove = false;
 
     }
