@@ -18,7 +18,7 @@ public class SFXScript : MonoBehaviour
     //}
     void OnTriggerEnter2D(Collider2D coll)
     {
-        float vol = 50;
+        float vol = 0.7f;
         if (once){
             source.PlayOneShot(ParentFightSFX,vol);
             once = false;
