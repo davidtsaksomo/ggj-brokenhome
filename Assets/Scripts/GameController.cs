@@ -57,6 +57,11 @@ public class GameController : MonoBehaviour {
                 }
                 break;
         }
+        if (Input.GetButtonDown("Submit"))//GetButtonDown("Submit")
+        {
+            Debug.Log(1);
+            DialogManager.dialogmanager.DisplayNextSentence();//DisplayNextDialog
+        }
     }
 
     public void StartGame()

@@ -6,13 +6,10 @@ public class DialogTrigger : MonoBehaviour
 {
     public DialogEvent dialogEvent;
     bool once = true;
-    void Update()
-    {
-        if (Input.GetButtonDown("Submit"))//GetButtonDown("Submit")
-        {
-            DialogManager.dialogmanager.DisplayNextDialog();//DisplayNextDialog
-        }
-    }
+    //void Update()
+    //{
+        
+    //}
     void OnTriggerEnter2D(Collider2D coll)
     {
         Debug.Log(coll.tag);
@@ -21,6 +18,7 @@ public class DialogTrigger : MonoBehaviour
         {
             DialogManager.dialogmanager.StartDialogEvent(dialogEvent);
             once = false;
+            print("berhasil");
         }
     }
 }
