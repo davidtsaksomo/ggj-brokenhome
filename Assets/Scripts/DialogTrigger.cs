@@ -5,6 +5,7 @@ using UnityEngine;
 public class DialogTrigger : MonoBehaviour
 {
     public DialogEvent dialogEvent;
+
     bool once = true;
     //void Update()
     //{
